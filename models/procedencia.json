@@ -1,0 +1,29 @@
+[
+  {
+    "url": "https://raw.githubusercontent.com/rafaelanchieta/essay/master/essay-br/essay-br.csv",
+    "arquivo": "essay.csv",
+    "sha256": "f160cd1469df9e68dde0a60c09b2e9865eda76e9bc24b1cc6b610a2d5406ceef"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/americanas-tech/b2w-reviews01/main/B2W-Reviews01.csv",
+    "arquivo": "b2w.csv",
+    "sha256": "821fb0bf9f7230b0fba4e4f9fadd75a66d1a9ff0b1657810791d33007eb2ab38"
+  },
+  {
+    "url": "https://huggingface.co/datasets/MBZUAI/Bactrian-X/resolve/refs%2Fconvert%2Fparquet/pt/train/0000.parquet",
+    "arquivo": "MBZUAI_Bactrian-X_pt_train_0.parquet",
+    "sha256": "1b218c32752859de0d384fe250b77f1174ea4358153148e00577f460565542ad"
+  },
+  {
+    "url": "https://huggingface.co/datasets/Samambas/Human_vs_AI_Portuguese/resolve/refs%2Fconvert%2Fparquet/default/train/0000.parquet",
+    "arquivo": "Samambas_Human_vs_AI_Portuguese_default_train_0.parquet",
+    "sha256": "3fa1bc2ef8e283f30a9a56efa5f3e22f33d12a8958ba79033774f52fad656b54"
+  },
+  {
+    "arena": "desativado",
+    "qwen_ativado": false,
+    "limite_caracteres_classificador": 5000,
+    "modelo_escolhido": "Ampliado",
+    "nota": "Metadados ausentes não foram inferidos nem inventados."
+  }
+]

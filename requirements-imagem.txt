@@ -1,0 +1,8 @@
+-r requirements.txt
+# Versões usadas pelo notebook da V3.
+transformers==5.18.0
+torch>=2.6,<3
+torchvision>=0.21,<1
+safetensors>=0.5,<1
+Pillow>=11.3,<13
+ImageHash>=4.3,<5

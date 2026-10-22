@@ -1,0 +1,10 @@
+Split,Fonte,N,Acuracia_balanceada,Deteccao_IA,Falsos_positivos,Acerto
+teste_novo,TODAS,16275,0.9688393140176887,0.9477331793242852,0.010054551288907905,
+teste_novo,B2W-Reviews01,8628,,,,0.9894529439035697
+teste_novo,Bactrian-X/pt,6926,,,,0.9477331793242852
+teste_novo,Essay-BR,721,,,,0.9958391123439667
+teste_historico,TODAS,2634,0.7184590298112095,0.4689880304678999,0.03206997084548105,
+teste_historico,ChatGPT,479,,,,0.5156576200417536
+teste_historico,Contos.pdf,660,,,,0.9318181818181818
+teste_historico,DomCasmurro.pdf,1055,,,,0.990521327014218
+teste_historico,Gemini,440,,,,0.41818181818181815
