@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeepGuard AI - Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="dark-mode"> <div id="login-screen" class="login-container">
+        <div class="login-box" id="box-login">
+            <div class="login-logo">
+                <i class="fa-solid fa-shield-halved logo-icon"></i>
+                <h2>DEEPGUARD <span class="logo-highlight">AI</span></h2>
+            </div>
+            <p class="login-subtitle">Acesse o painel de segurança</p>
+            <form id="login-form">
+                <div class="input-group">
+                    <label for="username">Usuário</label>
+                    <input type="text" id="username" placeholder="Digite seu usuário" autocomplete="username" required>
+                </div>
+                <div class="input-group">
+                    <label for="password">Senha</label>
+                    <div class="password-field">
+                        <input type="password" id="password" placeholder="Digite sua senha" autocomplete="current-password" required>
+                        <button type="button" class="btn-toggle-pass" data-target="password" title="Mostrar/ocultar senha"><i class="fa-solid fa-eye"></i></button>
+                    </div>
+                </div>
+                <p id="login-error" class="login-error-msg" style="display: none;">Usuário ou senha incorretos!</p>
+                <button type="submit" class="btn-login">ENTRAR NO SISTEMA</button>
+            </form>
+            <p class="switch-auth-text">Não tem uma conta? <a href="#" id="go-to-register">Criar Conta</a></p>
+        </div>
+
+        <div class="login-box" id="box-register" style="display: none;">
+            <div class="login-logo">
+                <i class="fa-solid fa-shield-halved logo-icon"></i>
+                <h2>DEEPGUARD <span class="logo-highlight">AI</span></h2>
+            </div>
+            <p class="login-subtitle">Cadastre uma nova credencial</p>
+            <form id="register-form">
+                <div class="input-group">
+                    <label for="reg-fullname">Nome Completo</label>
+                    <input type="text" id="reg-fullname" placeholder="Seu nome completo" autocomplete="name" required>
+                </div>
+                <div class="input-group">
+                    <label for="reg-email">E-mail</label>
+                    <input type="email" id="reg-email" placeholder="exemplo@email.com" autocomplete="email" required>
+                </div>
+                <div class="input-group">
+                    <label for="reg-username">Nome de Usuário</label>
+                    <input type="text" id="reg-username" placeholder="3 a 20 caracteres (letras, números, _ .)" autocomplete="username" required>
+                </div>
+                <div class="input-group">
+                    <label for="reg-password">Senha</label>
+                    <div class="password-field">
+                        <input type="password" id="reg-password" placeholder="Crie uma senha forte" autocomplete="new-password" required>
+                        <button type="button" class="btn-toggle-pass" data-target="reg-password" title="Mostrar/ocultar senha"><i class="fa-solid fa-eye"></i></button>
+                    </div>
+                    <ul class="password-requirements" id="password-requirements">
+                        <li data-rule="length"><i class="fa-solid fa-circle-xmark"></i> Mínimo de 8 caracteres</li>
+                        <li data-rule="upper"><i class="fa-solid fa-circle-xmark"></i> Uma letra maiúscula</li>
+                        <li data-rule="lower"><i class="fa-solid fa-circle-xmark"></i> Uma letra minúscula</li>
+                        <li data-rule="number"><i class="fa-solid fa-circle-xmark"></i> Um número</li>
+                        <li data-rule="special"><i class="fa-solid fa-circle-xmark"></i> Um caractere especial (!@#$%...)</li>
+                    </ul>
+                </div>
+                <div class="input-group">
+                    <label for="reg-confirm-password">Confirmar Senha</label>
+                    <div class="password-field">
+                        <input type="password" id="reg-confirm-password" placeholder="Repita a senha" autocomplete="new-password" required>
+                        <button type="button" class="btn-toggle-pass" data-target="reg-confirm-password" title="Mostrar/ocultar senha"><i class="fa-solid fa-eye"></i></button>
+                    </div>
+                </div>
+                <p id="register-error" class="login-error-msg" style="display: none;"></p>
+                <p id="register-success" class="login-success-msg" style="display: none;">Conta criada com sucesso! Redirecionando...</p>
+                <button type="submit" class="btn-login" style="background-color: #10b981; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);">CADASTRAR CONTA</button>
+            </form>
+            <p class="switch-auth-text">Já possui acesso? <a href="#" id="go-to-login">Fazer Login</a></p>
+        </div>
+    </div>
+
+    <div id="main-dashboard" style="display: none; flex-direction: column; min-height: 100vh;">
+        <header class="navbar">
+            <div class="logo-area">
+                <i class="fa-solid fa-shield-halved logo-icon"></i>
+                <span class="logo-text">DEEPGUARD <span class="logo-highlight">AI</span></span>
+                <span class="status-badge"><span class="status-dot"></span> SISTEMA ONLINE</span>
+            </div>
+            
+            <div class="user-area">
+                <div class="accessibility-dropdown-wrapper">
+                    <button id="dropdown-toggle" class="btn-dropdown-trigger" title="Acessibilidade">
+                        <i class="fa-solid fa-universal-access"></i> Fonte <i class="fa-solid fa-chevron-down arrow-icon"></i>
+                    </button>
+                    <div id="accessibility-menu" class="dropdown-menu">
+                        <div class="dropdown-menu-item">
+                            <span>Tamanho do Texto:</span>
+                            <div class="btn-group-row">
+                                <button id="font-decrease" title="Diminuir Texto"><i class="fa-solid fa-minus"></i> A-</button>
+                                <button id="font-increase" title="Aumentar Texto"><i class="fa-solid fa-plus"></i> A+</button>
+                            </div>
+                        </div>
+                        <hr class="dropdown-divider">
+                        <button id="access-reset" class="dropdown-btn-action btn-reset-action"><i class="fa-solid fa-rotate-left"></i> Resetar Padrão</button>
+                    </div>
+                </div>
+
+                <button id="theme-toggle" class="btn-theme" title="Alternar Tema">
+                    <i class="fa-solid fa-sun icon-sun"></i>
+                    <i class="fa-solid fa-moon icon-moon"></i>
+                </button>
+                <div class="admin-profile">
+                    <i class="fa-regular fa-user"></i>
+                    <span id="display-user">Admin</span>
+                </div>
+                <button class="btn-logout" id="btn-logout"><i class="fa-solid fa-arrow-right-from-bracket"></i> SAIR</button>
+            </div>
+        </header>
+
+        <section class="counters-bar">
+            <div class="counter-item">
+                <span class="counter-number num-blue" id="count-totais">000</span>
+                <span class="counter-label">ANÁLISES TOTAIS</span>
+            </div>
+            <div class="counter-item">
+                <span class="counter-number num-red" id="count-deepfakes">000</span>
+                <span class="counter-label">DEEPFAKES DETECTADOS</span>
+            </div>
+            <div class="counter-item">
+                <span class="counter-number num-green" id="count-autenticos">000</span>
+                <span class="counter-label">AUTÊNTICOS</span>
+            </div>
+            <div class="counter-item">
+                <span class="counter-number num-yellow" id="count-suspeitos">000</span>
+                <span class="counter-label">SUSPEITOS</span>
+            </div>
+        </section>
+
+        <div class="app-body">
+
+            <aside class="history-sidebar" id="history-sidebar">
+                <div class="sidebar-header">
+                    <h3><i class="fa-solid fa-clock-rotate-left"></i> Suas Análises</h3>
+                    <button class="btn-new-analysis" id="btn-new-analysis" title="Nova análise">
+                        <i class="fa-solid fa-plus"></i> Nova
+                    </button>
+                </div>
+                <div class="sidebar-search">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="sidebar-search-input" placeholder="Buscar no histórico...">
+                </div>
+                <div class="sidebar-list" id="sidebar-list">
+                    <p class="sidebar-empty" id="sidebar-empty">Nenhuma análise ainda.</p>
+                </div>
+            </aside>
+
+            <main class="dashboard-container">
+
+                <section class="input-card">
+                <div class="tab-container">
+                    <button class="tab-btn active" data-tab="tab-imagem">
+                        <i class="fa-regular fa-image"></i> IMAGEM / FOTO
+                    </button>
+                    <button class="tab-btn" data-tab="tab-texto">
+                        <i class="fa-regular fa-file-lines"></i> TEXTO
+                    </button>
+                </div>
+
+                <div id="tab-imagem" class="tab-content active">
+                    <p class="section-title">UPLOAD DE IMAGEM PARA ANÁLISE</p>
+                    <div class="drop-zone" id="drop-zone">
+                        <input type="file" id="file-input" accept="image/*" hidden>
+                        <i class="fa-solid fa-cloud-arrow-up upload-icon"></i>
+                        <p class="drop-text">Arraste uma imagem ou <span class="highlight-click" id="browse-btn">clique para selecionar</span></p>
+                        <p class="file-info">JPG, PNG, WEBP — até 10MB</p>
+                        <img id="image-preview" src="" alt="Preview" style="display: none; max-height: 100%; max-width: 100%; border-radius: 6px; object-fit: contain;">
+                    </div>
+                </div>
+
+                <div id="tab-texto" class="tab-content">
+                    <p class="section-title">INSERIR TEXTO PARA ANÁLISE</p>
+                    <div class="text-zone">
+                        <textarea id="text-input" placeholder="Cole ou escreva o texto que deseja analisar (mínimo 20 caracteres)..."></textarea>
+                        <div class="char-count">0 / 20 min</div>
+                    </div>
+                </div>
+
+                <button class="btn-analyze" id="btn-analyze" disabled>
+                    <i class="fa-solid fa-microchip"></i> INICIAR ANÁLISE
+                </button>
+
+                <footer class="card-footer">
+                    <i class="fa-solid fa-wave-square footer-icon"></i>
+                    <p>Os resultados são gerados por modelos de IA em fase de demonstração. Não utilize como única fonte de verificação.</p>
+                </footer>
+            </section>
+
+            <section class="results-card">
+                <div class="results-wrapper">
+                    <div class="empty-results" id="empty-results">
+                        <i class="fa-solid fa-expand placeholder-icon"></i>
+                        <p class="main-placeholder-text">Nenhuma análise realizada ainda.</p>
+                        <p class="sub-placeholder-text">Envie uma imagem ou texto para começar.</p>
+                    </div>
+                    
+                    <div class="results-display" id="results-display" style="display: none;">
+                        <h3><i class="fa-solid fa-chart-pie"></i> Resultado da Análise</h3>
+                        <p class="simulated-text">Pronto para receber a integração do back-end com a IA.</p>
+                    </div>
+                </div>
+
+            </section>
+
+            </main>
+
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

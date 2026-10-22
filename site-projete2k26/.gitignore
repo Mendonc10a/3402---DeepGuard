@@ -1,0 +1,4 @@
+node_modules/
+deepguard.db.json
+.env
+*.log
