@@ -162,21 +162,69 @@ app.get('/api/history/:id', requireAuth, (req, res) => {
   res.json({ entry });
 });
 
-// Registra uma nova análise no histórico do usuário logado
-app.post('/api/history', requireAuth, (req, res) => {
-  const { tipo, origem, resultado, detalhe } = req.body || {};
-  const resultadosValidos = ['DEEPFAKE', 'AUTÊNTICO', 'SUSPEITOS'];
-
-  if (!tipo || !origem || !resultadosValidos.includes(resultado)) {
-    return res.status(400).json({ error: 'Dados de análise inválidos.' });
+// O resultado e o histórico são produzidos pelo servidor, nunca pelo navegador.
+let analyzing = false;
+app.post('/api/analyze/text', requireAuth, async (req, res) => {
+  const texto = req.body?.texto;
+  if (typeof texto !== 'string' || texto.length > 20000 ||
+      texto.normalize('NFKC').replace(/\s+/gu, ' ').trim().length < 100) {
+    return res.status(400).json({ error: 'Informe de 100 a 20.000 caracteres.' });
   }
+  if (analyzing) return res.status(429).json({ error: 'Outra análise está em andamento. Tente novamente.' });
+  analyzing = true;
+  try {
+    const response = await fetch(`http://127.0.0.1:${process.env.MODEL_PORT || 8001}/analyze`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ texto }), signal: AbortSignal.timeout(30000)
+    });
+    const analysis = await response.json();
+    if (!response.ok) return res.status(response.status).json(analysis);
+    if (!['IA', 'HUMANO'].includes(analysis.resultado) || !Number.isFinite(analysis.pontuacao_ia)) {
+      throw new Error('Resposta inválida do serviço de inferência.');
+    }
+    const detalhe = `Resumo experimental: ${analysis.resultado}. Pontuação média IA: ${(analysis.pontuacao_ia * 100).toFixed(2)}%. ` +
+      `Analisados ${analysis.caracteres_analisados} caracteres em ${analysis.quantidade_trechos} trechos. ${analysis.aviso}`;
+    // Salva a mensagem original e a resposta no histórico do usuário autenticado.
+    db.insertHistory(req.session.userId, 'Texto', texto.replace(/\s+/g, ' ').trim().slice(0, 65), analysis.resultado, detalhe, texto, analysis);
+    res.json({ analysis, history: db.listHistoryByUser(req.session.userId),
+               counters: db.countersByUser(req.session.userId) });
+  } catch (err) {
+    res.status(503).json({ error: 'Serviço de IA indisponível. Inicie o inference.py e tente novamente.' });
+  } finally { analyzing = false; }
+});
 
-  db.insertHistory(req.session.userId, tipo, origem, resultado, detalhe);
-
-  res.status(201).json({
-    history: db.listHistoryByUser(req.session.userId),
-    counters: db.countersByUser(req.session.userId)
+app.post('/api/analyze/image', requireAuth,
+  express.raw({ type: ['image/jpeg', 'image/png', 'image/webp'], limit: '10mb' }),
+  async (req, res) => {
+    if (!Buffer.isBuffer(req.body) || !req.body.length) {
+      return res.status(400).json({ error: 'Envie JPG, PNG ou WEBP com até 10 MB.' });
+    }
+    if (analyzing) return res.status(429).json({ error: 'Outra análise está em andamento. Tente novamente.' });
+    analyzing = true;
+    try {
+      const response = await fetch(`http://127.0.0.1:${process.env.MODEL_PORT || 8001}/analyze/image`, {
+        method: 'POST', headers: { 'Content-Type': req.get('Content-Type') },
+        body: req.body, signal: AbortSignal.timeout(180000)
+      });
+      const analysis = await response.json();
+      if (!response.ok) return res.status(response.status).json(analysis);
+      if (!['IA', 'REAL'].includes(analysis.resultado) || analysis.versao_analise !== 'imagem-v3' ||
+          !Number.isFinite(analysis.pontuacao_ia) || analysis.pontuacao_ia < 0 || analysis.pontuacao_ia > 1) {
+        throw new Error('Resposta inválida da V3.');
+      }
+      let filename = 'Imagem';
+      try { filename = decodeURIComponent(req.get('X-File-Name') || 'Imagem').slice(0, 200); } catch (_) {}
+      const detalhe = `Deep Guard V3: ${analysis.resultado}. Pontuação IA: ${(analysis.pontuacao_ia * 100).toFixed(2)}%. ${analysis.aviso}`;
+      db.insertHistory(req.session.userId, 'Imagem', filename, analysis.resultado, detalhe, null, analysis);
+      res.json({ analysis, history: db.listHistoryByUser(req.session.userId), counters: db.countersByUser(req.session.userId) });
+    } catch (err) {
+      res.status(503).json({ error: 'Serviço de imagem indisponível ou tempo excedido. Confira o inference.py.' });
+    } finally { analyzing = false; }
   });
+
+app.use((err, req, res, next) => {
+  if (err.type === 'entity.too.large') return res.status(413).json({ error: 'Arquivo grande demais. Limite de imagem: 10 MB.' });
+  res.status(400).json({ error: 'Requisição inválida.' });
 });
 
 app.listen(PORT, () => {

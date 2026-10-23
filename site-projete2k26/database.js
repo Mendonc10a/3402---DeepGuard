@@ -101,7 +101,7 @@ function resetLoginAttempts(username) {
 // ---------------------------------------------------------------
 // HISTÓRICO
 // ---------------------------------------------------------------
-function insertHistory(userId, tipo, origem, resultado, detalhe) {
+function insertHistory(userId, tipo, origem, resultado, detalhe, mensagem = null, analise = null) {
   const data = loadRaw();
   const id = data.nextHistoryId++;
   data.history.push({
@@ -111,6 +111,8 @@ function insertHistory(userId, tipo, origem, resultado, detalhe) {
     origem,
     resultado,
     detalhe: detalhe || '',
+    mensagem,
+    analise,
     created_at: new Date().toISOString()
   });
   saveRaw(data);
@@ -137,8 +139,8 @@ function countersByUser(userId) {
   const rows = data.history.filter(h => h.user_id === userId);
   return {
     total: rows.length,
-    deepfakes: rows.filter(r => r.resultado === 'DEEPFAKE').length,
-    autenticos: rows.filter(r => r.resultado === 'AUTÊNTICO').length,
+    deepfakes: rows.filter(r => ['DEEPFAKE', 'IA'].includes(r.resultado)).length,
+    autenticos: rows.filter(r => ['AUTÊNTICO', 'HUMANO', 'REAL'].includes(r.resultado)).length,
     suspeitos: rows.filter(r => r.resultado === 'SUSPEITOS').length
   };
 }
